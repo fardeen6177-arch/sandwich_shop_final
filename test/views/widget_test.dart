@@ -26,24 +26,5 @@ void main() {
     expect(switchWidget.value, false);
   });
 
-  testWidgets('Toasted switch toggles correctly', (WidgetTester tester) async {
-    await tester.pumpWidget(const App());
-
-    // Find toasted switch
-    final toastedFinder = find.byKey(const Key('toasted_switch'));
-
-    expect(toastedFinder, findsOneWidget);
-
-    // Initial value should be false
-    Switch toastedSwitch = tester.widget<Switch>(toastedFinder);
-    expect(toastedSwitch.value, false);
-
-    // Tap switch
-    await tester.tap(toastedFinder);
-    await tester.pump();
-
-    // Verify toggled value is now true
-    toastedSwitch = tester.widget<Switch>(toastedFinder);
-    expect(toastedSwitch.value, true);
-  });
+  // Note: toasted switch removed in Worksheet 5 UI; previous tests moved/updated.
 }

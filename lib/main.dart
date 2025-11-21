@@ -1,8 +1,8 @@
 // ...existing code...
 import 'package:flutter/material.dart';
 import 'package:sandwich_shop_final/views/app_styles.dart';
-import 'package:sandwich_shop_final/repositories/order_repository.dart';
-import 'package:sandwich_shop_final/repositories/pricing_repository.dart';
+import 'package:sandwich_shop_final/models/sandwich.dart';
+import 'package:sandwich_shop_final/models/cart.dart';
 
 // AppStyles moved to `lib/views/app_styles.dart`.
 
@@ -10,10 +10,7 @@ import 'package:sandwich_shop_final/repositories/pricing_repository.dart';
 
 const TextStyle normalText = TextStyle(fontSize: 16);
 const TextStyle heading1 = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
-
-enum BreadType { white, wheat, multigrain }
-
-// OrderRepository moved to `lib/repositories/order_repository.dart`.
+const TextStyle heading2 = TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
 
 void main() {
   runApp(const App());
@@ -42,17 +39,17 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
-  late final OrderRepository _orderRepository;
+  final Cart _cart = Cart();
   final TextEditingController _notesController = TextEditingController();
+
+  SandwichType _selectedSandwichType = SandwichType.veggieDelight;
   bool _isFootlong = true;
-  bool _isToasted = false;
   BreadType _selectedBreadType = BreadType.white;
-  final PricingRepository _pricing = PricingRepository();
+  int _quantity = 1;
 
   @override
   void initState() {
     super.initState();
-    _orderRepository = OrderRepository(maxQuantity: widget.maxQuantity);
     _notesController.addListener(() {
       setState(() {});
     });
@@ -64,202 +61,197 @@ class _OrderScreenState extends State<OrderScreen> {
     super.dispose();
   }
 
-  VoidCallback? _getIncreaseCallback() {
-    if (_orderRepository.canIncrement) {
-      return () => setState(_orderRepository.increment);
-    }
-    return null;
-  }
-
-  VoidCallback? _getDecreaseCallback() {
-    if (_orderRepository.canDecrement) {
-      return () => setState(_orderRepository.decrement);
-    }
-    return null;
-  }
-
-  void _onSandwichTypeChanged(bool value) {
-    setState(() => _isFootlong = value);
-  }
-
-  void _onToastedChanged(bool value) {
-    setState(() => _isToasted = value);
-  }
-
-  void _onBreadTypeSelected(BreadType? value) {
-    if (value != null) {
-      setState(() => _selectedBreadType = value);
-    }
-  }
-
-  List<DropdownMenuEntry<BreadType>> _buildDropdownEntries() {
-    List<DropdownMenuEntry<BreadType>> entries = [];
-    for (BreadType bread in BreadType.values) {
-      DropdownMenuEntry<BreadType> newEntry = DropdownMenuEntry<BreadType>(
-        value: bread,
-        label: bread.name,
+  void _addToCart() {
+    if (_quantity > 0) {
+      final Sandwich sandwich = Sandwich(
+        type: _selectedSandwichType,
+        isFootlong: _isFootlong,
+        breadType: _selectedBreadType,
       );
-      entries.add(newEntry);
+
+      setState(() {
+        _cart.add(sandwich, quantity: _quantity);
+      });
+
+      String sizeText;
+      if (_isFootlong) {
+        sizeText = 'footlong';
+      } else {
+        sizeText = 'six-inch';
+      }
+      String confirmationMessage =
+          'Added $_quantity $sizeText ${sandwich.name} sandwich(es) on ${_selectedBreadType.name} bread to cart';
+
+      debugPrint(confirmationMessage);
+    }
+  }
+
+  VoidCallback? _getAddToCartCallback() {
+    if (_quantity > 0) {
+      return _addToCart;
+    }
+    return null;
+  }
+
+  List<DropdownMenuEntry<SandwichType>> _buildSandwichTypeEntries() {
+    List<DropdownMenuEntry<SandwichType>> entries = [];
+    for (SandwichType type in SandwichType.values) {
+      Sandwich sandwich = Sandwich(
+        type: type,
+        isFootlong: true,
+        breadType: BreadType.white,
+      );
+      DropdownMenuEntry<SandwichType> entry = DropdownMenuEntry<SandwichType>(
+        value: type,
+        label: sandwich.name,
+      );
+      entries.add(entry);
     }
     return entries;
   }
 
+  List<DropdownMenuEntry<BreadType>> _buildBreadTypeEntries() {
+    List<DropdownMenuEntry<BreadType>> entries = [];
+    for (BreadType bread in BreadType.values) {
+      DropdownMenuEntry<BreadType> entry = DropdownMenuEntry<BreadType>(
+        value: bread,
+        label: bread.name,
+      );
+      entries.add(entry);
+    }
+    return entries;
+  }
+
+  String _getCurrentImagePath() {
+    final Sandwich sandwich = Sandwich(
+      type: _selectedSandwichType,
+      isFootlong: _isFootlong,
+      breadType: _selectedBreadType,
+    );
+    return sandwich.image;
+  }
+
+  void _onSandwichTypeChanged(SandwichType? value) {
+    if (value != null) {
+      setState(() {
+        _selectedSandwichType = value;
+      });
+    }
+  }
+
+  void _onSizeChanged(bool value) {
+    setState(() {
+      _isFootlong = value;
+    });
+  }
+
+  void _onBreadTypeChanged(BreadType? value) {
+    if (value != null) {
+      setState(() {
+        _selectedBreadType = value;
+      });
+    }
+  }
+
+  void _increaseQuantity() {
+    setState(() {
+      _quantity++;
+    });
+  }
+
+  void _decreaseQuantity() {
+    if (_quantity > 0) {
+      setState(() {
+        _quantity--;
+      });
+    }
+  }
+
+  VoidCallback? _getDecreaseCallback() {
+    if (_quantity > 0) {
+      return _decreaseQuantity;
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    String sandwichType = _isFootlong ? 'footlong' : 'six-inch';
-
-    String noteForDisplay = _notesController.text.isEmpty
-        ? 'No notes added.'
-        : _notesController.text;
-
-    final total = _pricing.calculateTotal(
-      quantity: _orderRepository.quantity,
-      isFootlong: _isFootlong,
-    );
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Mr Tree Sandwiches', style: heading1)),
+      appBar: AppBar(title: const Text('Sandwich Counter', style: heading1)),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 24),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              OrderItemDisplay(
-                quantity: _orderRepository.quantity,
-                itemType: sandwichType,
-                breadType: _selectedBreadType,
-                orderNote: noteForDisplay,
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('six-inch', style: normalText),
-                  Switch(
-                    key: const Key('size_switch'),
-                    value: _isFootlong,
-                    onChanged: _onSandwichTypeChanged,
-                  ),
-                  const Text('footlong', style: normalText),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Not toasted', style: normalText),
-                  Switch(
-                    key: const Key('toasted_switch'),
-                    value: _isToasted,
-                    onChanged: _onToastedChanged,
-                  ),
-                  const Text('Toasted', style: normalText),
-                ],
-              ),
-              const SizedBox(height: 10),
-              DropdownMenu<BreadType>(
-                textStyle: normalText,
-                initialSelection: _selectedBreadType,
-                onSelected: _onBreadTypeSelected,
-                dropdownMenuEntries: _buildDropdownEntries(),
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.all(40.0),
-                child: TextField(
-                  key: const Key('notes_textfield'),
-                  controller: _notesController,
-                  decoration: const InputDecoration(
-                    labelText: 'Add a note (e.g., no onions)',
-                  ),
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                height: 300,
+                child: Image.asset(
+                  _getCurrentImagePath(),
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Center(
+                      child: Text('Image not found', style: normalText),
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 20),
+              DropdownMenu<SandwichType>(
+                width: double.infinity,
+                label: const Text('Sandwich Type'),
+                textStyle: normalText,
+                initialSelection: _selectedSandwichType,
+                onSelected: _onSandwichTypeChanged,
+                dropdownMenuEntries: _buildSandwichTypeEntries(),
+              ),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  StyledButton(
-                    onPressed: _getIncreaseCallback(),
-                    icon: Icons.add,
-                    label: 'Add',
-                    backgroundColor: Colors.green,
+                  const Text('Six-inch', style: normalText),
+                  Switch(
+                    key: const Key('size_switch'),
+                    value: _isFootlong,
+                    onChanged: _onSizeChanged,
                   ),
-                  const SizedBox(width: 8),
-                  StyledButton(
+                  const Text('Footlong', style: normalText),
+                ],
+              ),
+              const SizedBox(height: 20),
+              DropdownMenu<BreadType>(
+                width: double.infinity,
+                label: const Text('Bread Type'),
+                textStyle: normalText,
+                initialSelection: _selectedBreadType,
+                onSelected: _onBreadTypeChanged,
+                dropdownMenuEntries: _buildBreadTypeEntries(),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Quantity: ', style: normalText),
+                  IconButton(
                     onPressed: _getDecreaseCallback(),
-                    icon: Icons.remove,
-                    label: 'Remove',
-                    backgroundColor: Colors.red,
+                    icon: const Icon(Icons.remove),
+                  ),
+                  Text('$_quantity', style: heading2),
+                  IconButton(
+                    onPressed: _increaseQuantity,
+                    icon: const Icon(Icons.add),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              Text('Total: £${total.toStringAsFixed(2)}', style: normalText),
+              const SizedBox(height: 20),
+              StyledButton(
+                onPressed: _getAddToCartCallback(),
+                icon: Icons.add_shopping_cart,
+                label: 'Add to Cart',
+                backgroundColor: Colors.green,
+              ),
+              const SizedBox(height: 20),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class OrderItemDisplay extends StatelessWidget {
-  final int quantity;
-  final String itemType;
-  final BreadType breadType;
-  final String orderNote;
-
-  const OrderItemDisplay({
-    Key? key,
-    required this.quantity,
-    required this.itemType,
-    required this.breadType,
-    required this.orderNote,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 24),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Order Summary', style: heading1),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Quantity:', style: normalText),
-                Text('$quantity', style: normalText),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Type:', style: normalText),
-                Text(itemType, style: normalText),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Bread:', style: normalText),
-                Text(breadType.name, style: normalText),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Note:', style: normalText),
-            ),
-            const SizedBox(height: 4),
-            Text(orderNote, style: normalText),
-          ],
         ),
       ),
     );
