@@ -1,16 +1,48 @@
-# sandwich_shop_final
 
-A new Flutter project.
+# Sandwich Shop (sandwich_shop_final)
 
-## Getting Started
+Simple Flutter app demonstrating a sandwich-ordering UI (Mr Tree Sandwiches).
 
-This project is a starting point for a Flutter application.
+This repository contains a small Flutter application used for learning and
+testing Flutter widgets, state management and basic repository separation.
 
-A few resources to get you started if this is your first Flutter project:
+**Quick start**
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Ensure Flutter is installed: https://docs.flutter.dev/get-started/install
+- From the project root, get packages:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter pub get
+```
+
+- Run the app on a device or emulator:
+
+```bash
+flutter run
+```
+
+**Run tests**
+
+```bash
+flutter test
+```
+
+**What’s inside**
+
+- `lib/` — application source
+	- `main.dart` — app entry and UI
+	- `repositories/` — `OrderRepository`, `PricingRepository`
+- `test/` — widget and unit tests
+
+**Notes**
+
+- Tests currently exercise switches and basic UI interactions. Keys were
+	added to a couple of widgets to make them testable (`size_switch`,
+	`toasted_switch`, `notes_textfield`).
+- Repositories were moved to `lib/repositories` for better separation.
+
+If you want, I can push these changes to the remote branch or open a PR.
+
+---
+
+Maintainer: Fardeen
