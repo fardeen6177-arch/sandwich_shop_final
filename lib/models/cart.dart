@@ -48,4 +48,48 @@ class Cart {
   }
 
   List<CartItem> get items => List.unmodifiable(_items);
+
+  Map<String, dynamic> toJson() {
+    return {
+      'items': _items
+          .map(
+            (it) => {
+              'type': it.sandwich.type.name,
+              'isFootlong': it.sandwich.isFootlong,
+              'bread': it.sandwich.breadType.name,
+              'quantity': it.quantity,
+            },
+          )
+          .toList(),
+    };
+  }
+
+  static Cart fromJson(Map<String, dynamic> json) {
+    final cart = Cart();
+    final items = json['items'] as List<dynamic>? ?? [];
+    for (final item in items) {
+      final typeName = item['type'] as String;
+      final isFootlong = item['isFootlong'] as bool;
+      final breadName = item['bread'] as String;
+      final quantity = item['quantity'] as int;
+
+      final type = SandwichType.values.firstWhere((e) => e.name == typeName);
+      final bread = BreadType.values.firstWhere((e) => e.name == breadName);
+
+      final sandwich = Sandwich(
+        type: type,
+        isFootlong: isFootlong,
+        breadType: bread,
+      );
+      cart.add(sandwich, quantity: quantity);
+    }
+    return cart;
+  }
+
+  void clearAndLoadFrom(Cart other) {
+    _items.clear();
+    for (final it in other.items) {
+      _items.add(CartItem(sandwich: it.sandwich, quantity: it.quantity));
+    }
+  }
 }
