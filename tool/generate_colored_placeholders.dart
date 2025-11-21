@@ -35,6 +35,35 @@ void main() {
       color: ColorRgba8(0, 0, 0, 60),
     );
 
+    // For veggieDelight images, draw a simple 'bread + veggies' icon and label
+    if (fileName.startsWith('veggieDelight')) {
+      // Draw a rounded rectangle to represent the bread (simple filled rect)
+      fillRect(
+        image,
+        x1: 60,
+        y1: 90,
+        x2: 260,
+        y2: 150,
+        color: ColorRgb8(244, 214, 175),
+      );
+      // Add a darker crust band
+      fillRect(
+        image,
+        x1: 60,
+        y1: 86,
+        x2: 260,
+        y2: 94,
+        color: ColorRgb8(210, 150, 80),
+      );
+      // Add some green 'lettuce' circles
+      fillCircle(image, x: 100, y: 110, radius: 10, color: ColorRgb8(76, 175, 80));
+      fillCircle(image, x: 140, y: 115, radius: 10, color: ColorRgb8(56, 142, 60));
+      fillCircle(image, x: 180, y: 110, radius: 10, color: ColorRgb8(76, 175, 80));
+      // Draw the label (string then named font)
+      drawString(image, 'Veggie Delight', font: arial24, x: 12, y: 8, color: ColorRgb8(255, 255, 255));
+      drawString(image, 'on white bread', font: arial24, x: 12, y: 34, color: ColorRgb8(255, 255, 255));
+    }
+
     final png = encodePng(image, level: 6);
     final file = File('assets/images/$fileName');
     file.writeAsBytesSync(png);
