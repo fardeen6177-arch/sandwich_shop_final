@@ -14,10 +14,15 @@ class CartSummary extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Items: ${cart.totalItems}', key: const Key('cart_items')),
+          Text(
+            'Items: ${cart.totalItems}',
+            key: const Key('cart_items'),
+            style: AppStyles.normalText,
+          ),
           Text(
             'Total: £${cart.totalPrice.toStringAsFixed(2)}',
             key: const Key('cart_total'),
+            style: AppStyles.normalText,
           ),
         ],
       ),
