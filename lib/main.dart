@@ -1,5 +1,7 @@
 // ...existing code...
 import 'package:flutter/material.dart';
+import 'package:sandwich_shop_final/repositories/order_repository.dart';
+import 'package:sandwich_shop_final/repositories/pricing_repository.dart';
 
 // Replaced missing import with a minimal AppStyles implementation
 class AppStyles {
@@ -13,41 +15,14 @@ class AppStyles {
   );
 }
 
-class PricingRepository {
-  static const double _basePrice = 4.99;
-  static const double _footlongMultiplier = 1.8;
-
-  double calculateTotal({required int quantity, required bool isFootlong}) {
-    double price = _basePrice;
-    if (isFootlong) {
-      price *= _footlongMultiplier;
-    }
-    return price * quantity;
-  }
-}
+// PricingRepository moved to `lib/repositories/pricing_repository.dart`.
 
 const TextStyle normalText = TextStyle(fontSize: 16);
 const TextStyle heading1 = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
 
 enum BreadType { white, wheat, multigrain }
 
-class OrderRepository {
-  int quantity = 0;
-  final int maxQuantity;
-
-  OrderRepository({required this.maxQuantity});
-
-  bool get canIncrement => quantity < maxQuantity;
-  bool get canDecrement => quantity > 0;
-
-  void increment() {
-    if (canIncrement) quantity++;
-  }
-
-  void decrement() {
-    if (canDecrement) quantity--;
-  }
-}
+// OrderRepository moved to `lib/repositories/order_repository.dart`.
 
 void main() {
   runApp(const App());
