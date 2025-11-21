@@ -1,30 +1,49 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:sandwich_shop_final/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Switch toggles between six-inch and footlong', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const App());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Find sandwich size switch
+    final switchFinder = find.byKey(const Key('size_switch'));
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    expect(switchFinder, findsOneWidget);
+
+    // Read initial value (should be true = footlong)
+    Switch switchWidget = tester.widget<Switch>(switchFinder);
+    expect(switchWidget.value, true);
+
+    // Tap to toggle to six-inch
+    await tester.tap(switchFinder);
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify toggled value is now false
+    switchWidget = tester.widget<Switch>(switchFinder);
+    expect(switchWidget.value, false);
+  });
+
+  testWidgets('Toasted switch toggles correctly', (WidgetTester tester) async {
+    await tester.pumpWidget(const App());
+
+    // Find toasted switch
+    final toastedFinder = find.byKey(const Key('toasted_switch'));
+
+    expect(toastedFinder, findsOneWidget);
+
+    // Initial value should be false
+    Switch toastedSwitch = tester.widget<Switch>(toastedFinder);
+    expect(toastedSwitch.value, false);
+
+    // Tap switch
+    await tester.tap(toastedFinder);
+    await tester.pump();
+
+    // Verify toggled value is now true
+    toastedSwitch = tester.widget<Switch>(toastedFinder);
+    expect(toastedSwitch.value, true);
   });
 }
