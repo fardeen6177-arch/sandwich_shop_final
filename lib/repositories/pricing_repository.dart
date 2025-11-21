@@ -1,12 +1,9 @@
 class PricingRepository {
-  static const double _basePrice = 4.99;
-  static const double _footlongMultiplier = 1.8;
+  static const double _sixInchPrice = 7.0; // £7
+  static const double _footlongPrice = 11.0; // £11
 
   double calculateTotal({required int quantity, required bool isFootlong}) {
-    double price = _basePrice;
-    if (isFootlong) {
-      price *= _footlongMultiplier;
-    }
-    return price * quantity;
+    final unitPrice = isFootlong ? _footlongPrice : _sixInchPrice;
+    return unitPrice * quantity;
   }
 }
