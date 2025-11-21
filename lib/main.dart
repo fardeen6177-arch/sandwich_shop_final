@@ -1,19 +1,10 @@
 // ...existing code...
 import 'package:flutter/material.dart';
+import 'package:sandwich_shop_final/views/app_styles.dart';
 import 'package:sandwich_shop_final/repositories/order_repository.dart';
 import 'package:sandwich_shop_final/repositories/pricing_repository.dart';
 
-// Replaced missing import with a minimal AppStyles implementation
-class AppStyles {
-  static final ThemeData theme = ThemeData(
-    primarySwatch: Colors.green,
-    appBarTheme: const AppBarTheme(centerTitle: true),
-    scaffoldBackgroundColor: Colors.white,
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(foregroundColor: Colors.white),
-    ),
-  );
-}
+// AppStyles moved to `lib/views/app_styles.dart`.
 
 // PricingRepository moved to `lib/repositories/pricing_repository.dart`.
 
