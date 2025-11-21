@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sandwich_shop_final/views/app_styles.dart';
 import 'package:sandwich_shop_final/models/sandwich.dart';
 import 'package:sandwich_shop_final/models/cart.dart';
+import 'package:sandwich_shop_final/view_models/order_view_model.dart';
+import 'package:sandwich_shop_final/services/file_service.dart';
 import 'package:sandwich_shop_final/views/cart_screen.dart';
 
 class OrderScreen extends StatefulWidget {
@@ -14,6 +16,7 @@ class OrderScreen extends StatefulWidget {
 
 class _OrderScreenState extends State<OrderScreen> {
   final Cart _cart = Cart();
+  late final OrderViewModel _vm;
   final TextEditingController _notesController = TextEditingController();
   String? _confirmationMessage;
 
@@ -28,6 +31,7 @@ class _OrderScreenState extends State<OrderScreen> {
     _notesController.addListener(() {
       setState(() {});
     });
+    _vm = OrderViewModel(cart: _cart, fileService: FileService());
   }
 
   @override
@@ -45,7 +49,7 @@ class _OrderScreenState extends State<OrderScreen> {
       );
 
       setState(() {
-        _cart.add(sandwich, quantity: _quantity);
+        _vm.addToCart(sandwich, quantity: _quantity);
       });
 
       String sizeText = _isFootlong ? 'footlong' : 'six-inch';
@@ -63,6 +67,20 @@ class _OrderScreenState extends State<OrderScreen> {
       return _addToCart;
     }
     return null;
+  }
+
+  Future<void> _saveCart() async {
+    await _vm.saveCart('cart.json');
+    setState(() {
+      _confirmationMessage = 'Cart saved';
+    });
+  }
+
+  Future<void> _loadCart() async {
+    final ok = await _vm.loadCart('cart.json');
+    setState(() {
+      _confirmationMessage = ok ? 'Cart loaded' : 'No saved cart found';
+    });
   }
 
   List<DropdownMenuEntry<SandwichType>> _buildSandwichTypeEntries() {
@@ -240,7 +258,26 @@ class _OrderScreenState extends State<OrderScreen> {
                 const SizedBox(height: 12),
               ],
               // Cart summary
-              CartSummary(cart: _cart),
+              CartSummary(cart: _vm.cart),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  StyledButton(
+                    onPressed: _saveCart,
+                    icon: Icons.save,
+                    label: 'Save Cart',
+                    backgroundColor: Colors.blue,
+                  ),
+                  const SizedBox(width: 12),
+                  StyledButton(
+                    onPressed: _loadCart,
+                    icon: Icons.folder_open,
+                    label: 'Load Cart',
+                    backgroundColor: Colors.orange,
+                  ),
+                ],
+              ),
               const SizedBox(height: 20),
             ],
           ),

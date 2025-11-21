@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class FileService {
-  // Uses the system temp directory for simplicity in this exercise.
-  // For production, use path_provider to get application documents directory.
+  // Use the platform-specific application documents directory.
   Future<File> _fileFor(String name) async {
-    final dir = Directory.systemTemp;
+    final dir = await getApplicationDocumentsDirectory();
     return File('${dir.path}/$name');
   }
 

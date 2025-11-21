@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:sandwich_shop_final/models/cart.dart';
+import 'package:sandwich_shop_final/models/sandwich.dart';
 import 'package:sandwich_shop_final/services/file_service.dart';
 
 class OrderViewModel {
@@ -10,8 +11,8 @@ class OrderViewModel {
     : cart = cart ?? Cart(),
       fileService = fileService ?? FileService();
 
-  void addToCart(cartItem) {
-    // Delegates to Cart (UI layer will call Cart methods directly in this app).
+  void addToCart(Sandwich sandwich, {int quantity = 1}) {
+    cart.add(sandwich, quantity: quantity);
   }
 
   Future<void> saveCart(String filename) async {
