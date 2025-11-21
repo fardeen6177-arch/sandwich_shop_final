@@ -32,7 +32,7 @@ class App extends StatelessWidget {
 
 class OrderScreen extends StatefulWidget {
   final int maxQuantity;
-  const OrderScreen({Key? key, required this.maxQuantity}) : super(key: key);
+  const OrderScreen({super.key, required this.maxQuantity});
 
   @override
   State<OrderScreen> createState() => _OrderScreenState();
@@ -41,6 +41,7 @@ class OrderScreen extends StatefulWidget {
 class _OrderScreenState extends State<OrderScreen> {
   final Cart _cart = Cart();
   final TextEditingController _notesController = TextEditingController();
+  String? _confirmationMessage;
 
   SandwichType _selectedSandwichType = SandwichType.veggieDelight;
   bool _isFootlong = true;
@@ -82,7 +83,9 @@ class _OrderScreenState extends State<OrderScreen> {
       String confirmationMessage =
           'Added $_quantity $sizeText ${sandwich.name} sandwich(es) on ${_selectedBreadType.name} bread to cart';
 
-      debugPrint(confirmationMessage);
+      setState(() {
+        _confirmationMessage = confirmationMessage;
+      });
     }
   }
 
@@ -244,10 +247,40 @@ class _OrderScreenState extends State<OrderScreen> {
               ),
               const SizedBox(height: 20),
               StyledButton(
+                key: const Key('add_to_cart'),
                 onPressed: _getAddToCartCallback(),
                 icon: Icons.add_shopping_cart,
                 label: 'Add to Cart',
                 backgroundColor: Colors.green,
+              ),
+              const SizedBox(height: 12),
+              // Confirmation message
+              if (_confirmationMessage != null) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(
+                    _confirmationMessage!,
+                    key: const Key('confirmation_text'),
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
+              // Cart summary
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Items: ${_cart.totalItems}',
+                      key: const Key('cart_items'),
+                    ),
+                    Text(
+                      'Total: £${_cart.totalPrice.toStringAsFixed(2)}',
+                      key: const Key('cart_total'),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 20),
             ],
@@ -265,12 +298,12 @@ class StyledButton extends StatelessWidget {
   final Color backgroundColor;
 
   const StyledButton({
-    Key? key,
+    super.key,
     this.onPressed,
     required this.icon,
     required this.label,
     required this.backgroundColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -279,9 +312,9 @@ class StyledButton extends StatelessWidget {
       icon: Icon(icon, size: 18),
       label: Text(label, style: normalText),
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(backgroundColor),
-        foregroundColor: MaterialStateProperty.all(Colors.white),
-        padding: MaterialStateProperty.all(
+        backgroundColor: WidgetStateProperty.all(backgroundColor),
+        foregroundColor: WidgetStateProperty.all(Colors.white),
+        padding: WidgetStateProperty.all(
           const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         ),
       ),
