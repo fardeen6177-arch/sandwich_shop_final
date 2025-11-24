@@ -35,10 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   path_provider: ^2.0.15
-<<<<<<< Updated upstream
-  image: ^4.0.17
-=======
->>>>>>> Stashed changes
+  # image: ^4.0.17  # (optional) image package removed to avoid merge conflict
 
 dev_dependencies:
   flutter_test:
