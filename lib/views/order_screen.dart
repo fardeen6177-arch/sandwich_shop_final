@@ -5,6 +5,7 @@ import 'package:sandwich_shop_final/models/cart.dart';
 import 'package:sandwich_shop_final/view_models/order_view_model.dart';
 import 'package:sandwich_shop_final/services/file_service.dart';
 import 'package:sandwich_shop_final/views/cart_screen.dart';
+import 'package:sandwich_shop_final/views/app_drawer.dart';
 
 class OrderScreen extends StatefulWidget {
   final int maxQuantity;
@@ -167,6 +168,7 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const AppDrawer(),
       appBar: AppBar(
         title: const Text('Sandwich Counter', style: AppStyles.heading1),
       ),
