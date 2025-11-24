@@ -8,20 +8,23 @@ import 'package:sandwich_shop_final/views/checkout_screen.dart';
 import 'package:sandwich_shop_final/views/app_drawer.dart';
 
 class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
+  final FileService? fileService;
+
+  const CartScreen({super.key, this.fileService});
 
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
-  final FileService _fs = FileService();
+  late final FileService _fs;
   Cart _cart = Cart();
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
+    _fs = widget.fileService ?? FileService();
     _load();
   }
 
