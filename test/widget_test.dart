@@ -1,2 +1,5 @@
-// Tests have been moved to `test/views/widget_test.dart` per Worksheet 4.
-// Keep this file for compatibility, but the active widget tests live in `test/views`.
+// Tests have been moved to `test/views/` per Worksheet 4.
+// Keep this file for compatibility; provide an empty test entrypoint so
+// test runners that load this file do not fail.
+
+void main() {}
