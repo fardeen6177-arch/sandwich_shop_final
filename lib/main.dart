@@ -1,9 +1,13 @@
 // ...existing code...
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sandwich_shop_final/views/app_styles.dart';
 import 'package:sandwich_shop_final/views/order_screen.dart';
+import 'package:sandwich_shop_final/models/cart.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppStyles.loadFontSize();
   runApp(const App());
 }
 
@@ -12,11 +16,14 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mr Tree Sandwiches',
-      theme: AppStyles.theme,
-      debugShowCheckedModeBanner: false,
-      home: const OrderScreen(maxQuantity: 5),
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => Cart(),
+      child: MaterialApp(
+        title: 'Sandwich Shop App',
+        theme: AppStyles.theme,
+        debugShowCheckedModeBanner: false,
+        home: const OrderScreen(maxQuantity: 5),
+      ),
     );
   }
 }

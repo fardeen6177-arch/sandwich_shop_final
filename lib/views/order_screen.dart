@@ -168,7 +168,7 @@ class _OrderScreenState extends State<OrderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sandwich Counter', style: AppStyles.heading1),
+        title: Text('Sandwich Counter', style: AppStyles.heading1),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -181,7 +181,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   _getCurrentImagePath(),
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    return const Center(
+                    return Center(
                       child: Text(
                         'Image not found',
                         style: AppStyles.normalText,
@@ -203,13 +203,13 @@ class _OrderScreenState extends State<OrderScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Six-inch', style: AppStyles.normalText),
+                  Text('Six-inch', style: AppStyles.normalText),
                   Switch(
                     key: const Key('size_switch'),
                     value: _isFootlong,
                     onChanged: _onSizeChanged,
                   ),
-                  const Text('Footlong', style: AppStyles.normalText),
+                  Text('Footlong', style: AppStyles.normalText),
                 ],
               ),
               const SizedBox(height: 20),
@@ -225,7 +225,7 @@ class _OrderScreenState extends State<OrderScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Quantity: ', style: AppStyles.normalText),
+                  Text('Quantity: ', style: AppStyles.normalText),
                   IconButton(
                     onPressed: _getDecreaseCallback(),
                     icon: const Icon(Icons.remove),
