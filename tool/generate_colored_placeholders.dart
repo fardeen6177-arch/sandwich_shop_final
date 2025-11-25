@@ -99,8 +99,10 @@ void main() {
     final png = encodePng(image, level: 6);
     final file = File('assets/images/$fileName');
     file.writeAsBytesSync(png);
+    // ignore: avoid_print
     print('Wrote ${file.path} (${png.length} bytes)');
   }
 
+  // ignore: avoid_print
   print('Generated colored placeholders.');
 }

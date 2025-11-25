@@ -308,9 +308,9 @@ class StyledButton extends StatelessWidget {
       icon: Icon(icon, size: 18),
       label: Text(label, style: AppStyles.normalText),
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(backgroundColor),
-        foregroundColor: MaterialStateProperty.all(Colors.white),
-        padding: MaterialStateProperty.all(
+        backgroundColor: WidgetStateProperty.all(backgroundColor),
+        foregroundColor: WidgetStateProperty.all(Colors.white),
+        padding: WidgetStateProperty.all(
           const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         ),
       ),
