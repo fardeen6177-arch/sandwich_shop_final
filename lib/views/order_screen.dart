@@ -10,7 +10,11 @@ import 'package:sandwich_shop_final/views/cart_screen.dart';
 import 'package:sandwich_shop_final/views/cart_screen_page.dart';
 import 'package:sandwich_shop_final/views/styled_button.dart';
 import 'package:sandwich_shop_final/views/settings_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:sandwich_shop_final/views/order_history_screen.dart';
+import 'package:sandwich_shop_final/views/dev_log.dart';
+import 'package:sandwich_shop_final/services/dev_logger.dart';
+// dev logger is used by the dev log screen; keep import for clarity
 // profile_screen import removed (not used here)
 
 class OrderScreen extends StatefulWidget {
@@ -62,6 +66,10 @@ class _OrderScreenState extends State<OrderScreen> {
           'Added $_quantity $sizeText ${sandwich.name} sandwich(es) on ${_selectedBreadType.name} bread to cart';
 
       setState(() => _confirmationMessage = confirmationMessage);
+      // Log add-to-cart for debugging
+      DevLogger.instance.log(
+        'Added $_quantity ${sandwich.name} (footlong=${sandwich.isFootlong}) to cart',
+      );
     }
   }
 
@@ -78,6 +86,7 @@ class _OrderScreenState extends State<OrderScreen> {
       final cart = Provider.of<Cart>(context, listen: false);
       final jsonStr = jsonEncode(cart.toJson());
       await _fileService.save('cart.json', jsonStr);
+      DevLogger.instance.log('Cart saved to cart.json');
       if (!mounted) return;
       setState(() => _confirmationMessage = 'Cart saved');
       messenger.showSnackBar(const SnackBar(content: Text('Cart saved')));
@@ -85,6 +94,7 @@ class _OrderScreenState extends State<OrderScreen> {
       // Log and show error
       // ignore: avoid_print
       print('Failed to save cart: $e\n$st');
+      DevLogger.instance.log('Failed to save cart: $e');
       if (mounted) {
         messenger.showSnackBar(
           SnackBar(content: Text('Failed to save cart: $e')),
@@ -98,6 +108,7 @@ class _OrderScreenState extends State<OrderScreen> {
     try {
       final data = await _fileService.read('cart.json');
       if (data == null) {
+        DevLogger.instance.log('No saved cart found (cart.json missing)');
         if (!mounted) return;
         setState(() => _confirmationMessage = 'No saved cart found');
         messenger.showSnackBar(
@@ -111,11 +122,13 @@ class _OrderScreenState extends State<OrderScreen> {
       if (!mounted) return;
       final cart = Provider.of<Cart>(context, listen: false);
       cart.clearAndLoadFrom(loaded);
+      DevLogger.instance.log('Cart loaded from cart.json');
       setState(() => _confirmationMessage = 'Cart loaded');
       messenger.showSnackBar(const SnackBar(content: Text('Cart loaded')));
     } catch (e, st) {
       // ignore: avoid_print
       print('Failed to load cart: $e\n$st');
+      DevLogger.instance.log('Failed to load cart: $e');
       if (mounted) {
         messenger.showSnackBar(
           SnackBar(content: Text('Failed to load cart: $e')),
@@ -211,6 +224,16 @@ class _OrderScreenState extends State<OrderScreen> {
       appBar: AppBar(
         title: Text('Sandwich Counter', style: AppStyles.heading1),
         actions: [
+          // Dev log button (debug builds only)
+          if (kDebugMode)
+            IconButton(
+              tooltip: 'Dev Log',
+              icon: const Icon(Icons.bug_report),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const DevLogScreen()),
+              ),
+            ),
           IconButton(
             tooltip: 'Cart',
             icon: const Icon(Icons.shopping_cart),
