@@ -56,19 +56,53 @@ void main() {
         color: ColorRgb8(210, 150, 80),
       );
       // Add some green 'lettuce' circles
-      fillCircle(image, x: 100, y: 110, radius: 10, color: ColorRgb8(76, 175, 80));
-      fillCircle(image, x: 140, y: 115, radius: 10, color: ColorRgb8(56, 142, 60));
-      fillCircle(image, x: 180, y: 110, radius: 10, color: ColorRgb8(76, 175, 80));
+      fillCircle(
+        image,
+        x: 100,
+        y: 110,
+        radius: 10,
+        color: ColorRgb8(76, 175, 80),
+      );
+      fillCircle(
+        image,
+        x: 140,
+        y: 115,
+        radius: 10,
+        color: ColorRgb8(56, 142, 60),
+      );
+      fillCircle(
+        image,
+        x: 180,
+        y: 110,
+        radius: 10,
+        color: ColorRgb8(76, 175, 80),
+      );
       // Draw the label (string then named font)
-      drawString(image, 'Veggie Delight', font: arial24, x: 12, y: 8, color: ColorRgb8(255, 255, 255));
-      drawString(image, 'on white bread', font: arial24, x: 12, y: 34, color: ColorRgb8(255, 255, 255));
+      drawString(
+        image,
+        'Veggie Delight',
+        font: arial24,
+        x: 12,
+        y: 8,
+        color: ColorRgb8(255, 255, 255),
+      );
+      drawString(
+        image,
+        'on white bread',
+        font: arial24,
+        x: 12,
+        y: 34,
+        color: ColorRgb8(255, 255, 255),
+      );
     }
 
     final png = encodePng(image, level: 6);
     final file = File('assets/images/$fileName');
     file.writeAsBytesSync(png);
+    // ignore: avoid_print
     print('Wrote ${file.path} (${png.length} bytes)');
   }
 
+  // ignore: avoid_print
   print('Generated colored placeholders.');
 }

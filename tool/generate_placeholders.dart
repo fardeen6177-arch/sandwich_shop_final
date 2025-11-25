@@ -23,8 +23,10 @@ void main() async {
     final file = File(path);
     await file.create(recursive: true);
     await file.writeAsBytes(bytes);
+    // ignore: avoid_print
     print('Wrote $path (${bytes.length} bytes)');
   }
 
+  // ignore: avoid_print
   print('All placeholder images generated.');
 }
