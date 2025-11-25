@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:sandwich_shop_final/models/cart.dart';
 import 'package:sandwich_shop_final/services/file_service.dart';
 import 'package:sandwich_shop_final/views/cart_screen.dart';
+import 'package:sandwich_shop_final/views/cart_screen_page.dart';
 import 'package:sandwich_shop_final/views/styled_button.dart';
 import 'package:sandwich_shop_final/views/settings_screen.dart';
 import 'package:sandwich_shop_final/views/order_history_screen.dart';
@@ -181,6 +182,14 @@ class _OrderScreenState extends State<OrderScreen> {
         title: Text('Sandwich Counter', style: AppStyles.heading1),
         actions: [
           IconButton(
+            tooltip: 'Cart',
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const CartScreen()),
+            ),
+          ),
+          IconButton(
             tooltip: 'Settings',
             icon: const Icon(Icons.settings),
             onPressed: () => Navigator.push(
@@ -309,6 +318,14 @@ class _OrderScreenState extends State<OrderScreen> {
               const SizedBox(height: 20),
             ],
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.shopping_cart),
+        label: const Text('View Cart'),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const CartScreen()),
         ),
       ),
     );

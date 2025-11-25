@@ -20,6 +20,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   bool _processing = false;
 
   Future<void> _confirmOrder() async {
+    final cart = Provider.of<Cart>(context, listen: false);
     setState(() => _processing = true);
     await Future.delayed(const Duration(seconds: 1));
 
@@ -27,9 +28,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final rnd = Random();
     final orderId = 'ORD${1000 + rnd.nextInt(9000)}';
     final estimated = '${10 + rnd.nextInt(20)} mins';
-
-    // Persist order to history before returning
-    final cart = Provider.of<Cart>(context, listen: false);
     final service =
         widget.orderHistoryService as OrderHistoryService? ??
         OrderHistoryService();
@@ -41,6 +39,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       orderDate: DateTime.now(),
     );
     await service.saveOrder(saved);
+    // Clear the cart now that the order is persisted
+    cart.clear();
 
     if (!mounted) return;
     Navigator.pop(context, {'orderId': orderId, 'estimatedTime': estimated});
