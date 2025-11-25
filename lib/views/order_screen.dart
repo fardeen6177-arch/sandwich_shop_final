@@ -73,25 +73,55 @@ class _OrderScreenState extends State<OrderScreen> {
   }
 
   Future<void> _saveCart() async {
-    final cart = Provider.of<Cart>(context, listen: false);
-    final jsonStr = jsonEncode(cart.toJson());
-    await _fileService.save('cart.json', jsonStr);
-    setState(() => _confirmationMessage = 'Cart saved');
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final cart = Provider.of<Cart>(context, listen: false);
+      final jsonStr = jsonEncode(cart.toJson());
+      await _fileService.save('cart.json', jsonStr);
+      if (!mounted) return;
+      setState(() => _confirmationMessage = 'Cart saved');
+      messenger.showSnackBar(const SnackBar(content: Text('Cart saved')));
+    } catch (e, st) {
+      // Log and show error
+      // ignore: avoid_print
+      print('Failed to save cart: $e\n$st');
+      if (mounted) {
+        messenger.showSnackBar(
+          SnackBar(content: Text('Failed to save cart: $e')),
+        );
+      }
+    }
   }
 
   Future<void> _loadCart() async {
-    final data = await _fileService.read('cart.json');
-    if (data == null) {
-      setState(() => _confirmationMessage = 'No saved cart found');
-      return;
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final data = await _fileService.read('cart.json');
+      if (data == null) {
+        if (!mounted) return;
+        setState(() => _confirmationMessage = 'No saved cart found');
+        messenger.showSnackBar(
+          const SnackBar(content: Text('No saved cart found')),
+        );
+        return;
+      }
+      final Map<String, dynamic> parsed =
+          jsonDecode(data) as Map<String, dynamic>;
+      final Cart loaded = Cart.fromJson(parsed);
+      if (!mounted) return;
+      final cart = Provider.of<Cart>(context, listen: false);
+      cart.clearAndLoadFrom(loaded);
+      setState(() => _confirmationMessage = 'Cart loaded');
+      messenger.showSnackBar(const SnackBar(content: Text('Cart loaded')));
+    } catch (e, st) {
+      // ignore: avoid_print
+      print('Failed to load cart: $e\n$st');
+      if (mounted) {
+        messenger.showSnackBar(
+          SnackBar(content: Text('Failed to load cart: $e')),
+        );
+      }
     }
-    final Map<String, dynamic> parsed =
-        jsonDecode(data) as Map<String, dynamic>;
-    final Cart loaded = Cart.fromJson(parsed);
-    if (!mounted) return;
-    final cart = Provider.of<Cart>(context, listen: false);
-    cart.clearAndLoadFrom(loaded);
-    setState(() => _confirmationMessage = 'Cart loaded');
   }
 
   List<DropdownMenuEntry<SandwichType>> _buildSandwichTypeEntries() {
