@@ -4,9 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sandwich_shop_final/models/cart.dart';
 import 'package:sandwich_shop_final/views/app_styles.dart';
+import 'package:sandwich_shop_final/services/order_history_service.dart';
+import 'package:sandwich_shop_final/models/saved_order.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key});
+  final dynamic orderHistoryService;
+
+  const CheckoutScreen({super.key, this.orderHistoryService});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -23,6 +27,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final rnd = Random();
     final orderId = 'ORD${1000 + rnd.nextInt(9000)}';
     final estimated = '${10 + rnd.nextInt(20)} mins';
+
+    // Persist order to history before returning
+    final cart = Provider.of<Cart>(context, listen: false);
+    final service =
+        widget.orderHistoryService as OrderHistoryService? ??
+        OrderHistoryService();
+    final saved = SavedOrder(
+      id: 0,
+      orderId: orderId,
+      totalAmount: cart.totalPrice,
+      itemCount: cart.totalItems,
+      orderDate: DateTime.now(),
+    );
+    await service.saveOrder(saved);
 
     if (!mounted) return;
     Navigator.pop(context, {'orderId': orderId, 'estimatedTime': estimated});

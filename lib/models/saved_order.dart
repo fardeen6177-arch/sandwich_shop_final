@@ -15,6 +15,7 @@ class SavedOrder {
 
   Map<String, Object?> toMap() {
     return {
+      'id': id,
       'orderId': orderId,
       'totalAmount': totalAmount,
       'itemCount': itemCount,

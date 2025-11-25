@@ -3,8 +3,11 @@ import 'package:sandwich_shop_final/models/saved_order.dart';
 import 'package:sandwich_shop_final/services/file_service.dart';
 
 class OrderHistoryService {
-  final FileService _fileService = FileService();
+  final FileService _fileService;
   final String _fileName = 'orders.json';
+
+  OrderHistoryService([FileService? fileService])
+    : _fileService = fileService ?? FileService();
 
   Future<List<SavedOrder>> loadOrders() async {
     final data = await _fileService.read(_fileName);
