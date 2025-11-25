@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:sandwich_shop_final/views/app_styles.dart';
 import 'package:sandwich_shop_final/models/sandwich.dart';
+import 'dart:convert';
+
+import 'package:provider/provider.dart';
 import 'package:sandwich_shop_final/models/cart.dart';
-import 'package:sandwich_shop_final/view_models/order_view_model.dart';
 import 'package:sandwich_shop_final/services/file_service.dart';
 import 'package:sandwich_shop_final/views/cart_screen.dart';
+import 'package:sandwich_shop_final/views/settings_screen.dart';
+import 'package:sandwich_shop_final/views/order_history_screen.dart';
+import 'package:sandwich_shop_final/views/profile_screen.dart';
 
 class OrderScreen extends StatefulWidget {
   final int maxQuantity;
@@ -15,8 +20,7 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
-  final Cart _cart = Cart();
-  late final OrderViewModel _vm;
+  final FileService _fileService = FileService();
   final TextEditingController _notesController = TextEditingController();
   String? _confirmationMessage;
 
@@ -31,7 +35,7 @@ class _OrderScreenState extends State<OrderScreen> {
     _notesController.addListener(() {
       setState(() {});
     });
-    _vm = OrderViewModel(cart: _cart, fileService: FileService());
+    // no local cart; use Provider for Cart access
   }
 
   @override
@@ -48,17 +52,14 @@ class _OrderScreenState extends State<OrderScreen> {
         breadType: _selectedBreadType,
       );
 
-      setState(() {
-        _vm.addToCart(sandwich, quantity: _quantity);
-      });
+      final cart = Provider.of<Cart>(context, listen: false);
+      cart.add(sandwich, quantity: _quantity);
 
       String sizeText = _isFootlong ? 'footlong' : 'six-inch';
       String confirmationMessage =
           'Added $_quantity $sizeText ${sandwich.name} sandwich(es) on ${_selectedBreadType.name} bread to cart';
 
-      setState(() {
-        _confirmationMessage = confirmationMessage;
-      });
+      setState(() => _confirmationMessage = confirmationMessage);
     }
   }
 
@@ -70,17 +71,25 @@ class _OrderScreenState extends State<OrderScreen> {
   }
 
   Future<void> _saveCart() async {
-    await _vm.saveCart('cart.json');
-    setState(() {
-      _confirmationMessage = 'Cart saved';
-    });
+    final cart = Provider.of<Cart>(context, listen: false);
+    final jsonStr = jsonEncode(cart.toJson());
+    await _fileService.save('cart.json', jsonStr);
+    setState(() => _confirmationMessage = 'Cart saved');
   }
 
   Future<void> _loadCart() async {
-    final ok = await _vm.loadCart('cart.json');
-    setState(() {
-      _confirmationMessage = ok ? 'Cart loaded' : 'No saved cart found';
-    });
+    final data = await _fileService.read('cart.json');
+    if (data == null) {
+      setState(() => _confirmationMessage = 'No saved cart found');
+      return;
+    }
+    final Map<String, dynamic> parsed =
+        jsonDecode(data) as Map<String, dynamic>;
+    final Cart loaded = Cart.fromJson(parsed);
+    if (!mounted) return;
+    final cart = Provider.of<Cart>(context, listen: false);
+    cart.clearAndLoadFrom(loaded);
+    setState(() => _confirmationMessage = 'Cart loaded');
   }
 
   List<DropdownMenuEntry<SandwichType>> _buildSandwichTypeEntries() {
@@ -258,7 +267,7 @@ class _OrderScreenState extends State<OrderScreen> {
                 const SizedBox(height: 12),
               ],
               // Cart summary
-              CartSummary(cart: _vm.cart),
+              const CartSummary(),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
