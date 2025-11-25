@@ -35,7 +35,7 @@ class App extends StatelessWidget {
 
 class OrderScreen extends StatefulWidget {
   final int maxQuantity;
-  const OrderScreen({Key? key, required this.maxQuantity}) : super(key: key);
+  const OrderScreen({super.key, required this.maxQuantity});
 
   @override
   State<OrderScreen> createState() => _OrderScreenState();
@@ -211,12 +211,12 @@ class OrderItemDisplay extends StatelessWidget {
   final String orderNote;
 
   const OrderItemDisplay({
-    Key? key,
+    super.key,
     required this.quantity,
     required this.itemType,
     required this.breadType,
     required this.orderNote,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -273,12 +273,12 @@ class StyledButton extends StatelessWidget {
   final Color backgroundColor;
 
   const StyledButton({
-    Key? key,
+    super.key,
     this.onPressed,
     required this.icon,
     required this.label,
     required this.backgroundColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -287,9 +287,9 @@ class StyledButton extends StatelessWidget {
       icon: Icon(icon, size: 18),
       label: Text(label, style: normalText),
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(backgroundColor),
-        foregroundColor: MaterialStateProperty.all(Colors.white),
-        padding: MaterialStateProperty.all(
+        backgroundColor: WidgetStateProperty.all(backgroundColor),
+        foregroundColor: WidgetStateProperty.all(Colors.white),
+        padding: WidgetStateProperty.all(
           const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         ),
       ),
