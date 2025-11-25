@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:sandwich_shop_final/models/sandwich.dart';
 import 'package:sandwich_shop_final/repositories/pricing_repository.dart';
 
@@ -8,7 +9,7 @@ class CartItem {
   CartItem({required this.sandwich, required this.quantity});
 }
 
-class Cart {
+class Cart extends ChangeNotifier {
   final List<CartItem> _items = [];
   final PricingRepository _pricing = PricingRepository();
 
@@ -26,6 +27,33 @@ class Cart {
     } else {
       existing.quantity += quantity;
     }
+
+    notifyListeners();
+  }
+
+  void remove(Sandwich sandwich, {int quantity = 1}) {
+    final existing = _items.firstWhere(
+      (it) =>
+          it.sandwich.type == sandwich.type &&
+          it.sandwich.isFootlong == sandwich.isFootlong &&
+          it.sandwich.breadType == sandwich.breadType,
+      orElse: () => CartItem(sandwich: sandwich, quantity: 0),
+    );
+
+    if (existing.quantity == 0) return;
+
+    if (existing.quantity > quantity) {
+      existing.quantity -= quantity;
+    } else {
+      _items.removeWhere((it) => it == existing);
+    }
+
+    notifyListeners();
+  }
+
+  void clear() {
+    _items.clear();
+    notifyListeners();
   }
 
   int get totalItems {
@@ -91,5 +119,24 @@ class Cart {
     for (final it in other.items) {
       _items.add(CartItem(sandwich: it.sandwich, quantity: it.quantity));
     }
+    notifyListeners();
+  }
+
+  // Convenience getters used across the app
+  bool get isEmpty => _items.isEmpty;
+
+  int get length => _items.length;
+
+  int get countOfItems => totalItems;
+
+  int getQuantity(Sandwich sandwich) {
+    final existing = _items.firstWhere(
+      (it) =>
+          it.sandwich.type == sandwich.type &&
+          it.sandwich.isFootlong == sandwich.isFootlong &&
+          it.sandwich.breadType == sandwich.breadType,
+      orElse: () => CartItem(sandwich: sandwich, quantity: 0),
+    );
+    return existing.quantity;
   }
 }
