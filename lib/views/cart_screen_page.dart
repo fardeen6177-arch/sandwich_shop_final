@@ -5,7 +5,7 @@ import 'package:sandwich_shop_final/views/app_styles.dart';
 import 'package:sandwich_shop_final/models/sandwich.dart';
 import 'package:sandwich_shop_final/repositories/pricing_repository.dart';
 import 'package:sandwich_shop_final/views/checkout_screen.dart';
-import 'package:sandwich_shop_final/views/order_screen.dart';
+import 'package:sandwich_shop_final/views/styled_button.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});

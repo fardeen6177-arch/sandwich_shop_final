@@ -7,9 +7,10 @@ import 'package:provider/provider.dart';
 import 'package:sandwich_shop_final/models/cart.dart';
 import 'package:sandwich_shop_final/services/file_service.dart';
 import 'package:sandwich_shop_final/views/cart_screen.dart';
+import 'package:sandwich_shop_final/views/styled_button.dart';
 import 'package:sandwich_shop_final/views/settings_screen.dart';
 import 'package:sandwich_shop_final/views/order_history_screen.dart';
-import 'package:sandwich_shop_final/views/profile_screen.dart';
+// profile_screen import removed (not used here)
 
 class OrderScreen extends StatefulWidget {
   final int maxQuantity;
@@ -178,6 +179,24 @@ class _OrderScreenState extends State<OrderScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Sandwich Counter', style: AppStyles.heading1),
+        actions: [
+          IconButton(
+            tooltip: 'Settings',
+            icon: const Icon(Icons.settings),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            ),
+          ),
+          IconButton(
+            tooltip: 'Orders',
+            icon: const Icon(Icons.history),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const OrderHistoryScreen()),
+            ),
+          ),
+        ],
       ),
       body: Center(
         child: SingleChildScrollView(
