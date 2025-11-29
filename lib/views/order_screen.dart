@@ -6,6 +6,7 @@ import 'package:sandwich_shop_final/view_models/order_view_model.dart';
 import 'package:sandwich_shop_final/services/file_service.dart';
 import 'package:sandwich_shop_final/views/cart_screen.dart';
 import 'package:sandwich_shop_final/views/app_drawer.dart';
+import 'package:sandwich_shop_final/views/profile_screen.dart';
 
 class OrderScreen extends StatefulWidget {
   final int maxQuantity;
@@ -16,6 +17,24 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
+  void _navigateToProfile() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const ProfileScreen()),
+    );
+  }
+
+  // List of all sandwich image paths
+  final List<String> _sandwichImages = [
+    'images/veggieDelight_footlong.png',
+    'images/veggieDelight_six_inch.png',
+    'images/chickenTeriyaki_footlong.png',
+    'images/chickenTeriyaki_six_inch.png',
+    'images/meatballMarinara_footlong.png',
+    'images/meatballMarinara_six_inch.png',
+    'images/tunaMelt_footlong.png',
+    'images/tunaMelt_six_inch.png',
+  ];
   final Cart _cart = Cart();
   late final OrderViewModel _vm;
   final TextEditingController _notesController = TextEditingController();
@@ -177,6 +196,45 @@ class _OrderScreenState extends State<OrderScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Sandwich image gallery
+              SizedBox(
+                height: 120,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  itemCount: _sandwichImages.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        _sandwichImages[index],
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 100,
+                            height: 100,
+                            color: Colors.grey[300],
+                            child: const Center(
+                              child: Text(
+                                'Not found',
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+              // Main sandwich image
               SizedBox(
                 height: 300,
                 child: Image.asset(
@@ -193,6 +251,13 @@ class _OrderScreenState extends State<OrderScreen> {
                 ),
               ),
               const SizedBox(height: 20),
+              // Profile button
+              StyledButton(
+                onPressed: _navigateToProfile,
+                icon: Icons.person,
+                label: 'Profile',
+                backgroundColor: Colors.purple,
+              ),
               DropdownMenu<SandwichType>(
                 width: double.infinity,
                 label: const Text('Sandwich Type'),

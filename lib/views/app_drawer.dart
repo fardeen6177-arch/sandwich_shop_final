@@ -13,11 +13,21 @@ class AppDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.blue),
-            child: Text(
-              'Sandwich Shop',
-              style: TextStyle(color: Colors.white, fontSize: 20),
+          DrawerHeader(
+            decoration: const BoxDecoration(color: Colors.blue),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 64,
+                  child: Image.asset('images/logo.png', fit: BoxFit.contain),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Sandwich Shop',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              ],
             ),
           ),
           ListTile(
@@ -50,6 +60,13 @@ class AppDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(builder: (_) => const ProfileScreen()),
               );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings),
+            title: const Text('Settings'),
+            onTap: () {
+              Navigator.pushNamed(context, '/settings');
             },
           ),
           ListTile(

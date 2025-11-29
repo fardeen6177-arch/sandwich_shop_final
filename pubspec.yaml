@@ -35,6 +35,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   path_provider: ^2.0.15
+  go_router: ^17.0.0
+  shared_preferences: ^2.5.3
   # image: ^4.0.17  # (optional) image package removed to avoid merge conflict
 
 dev_dependencies:
@@ -42,6 +44,8 @@ dev_dependencies:
     sdk: flutter
 
   image: ^4.0.17
+
+  flutter_launcher_icons: ^0.14.4
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -59,11 +63,36 @@ flutter:
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
-  uses-material-design: true
 
+# flutter_launcher_icons configuration
+flutter_icons:
+  android: true
+  ios: true
+  macos:
+    generate: true
+    image_path: "assets/images/logo.png"
+  web:
+    generate: true
+    image_path: "assets/images/logo.png"
+  # windows: true
+  windows:
+    generate: true
+    image_path: "assets/images/logo.png"
+  image_path: "assets/images/logo.png"
+
+  uses-material-design: true
   assets:
-    - assets/images/
-    - assets/sandwiches.json
+    - images/app_icon.png
+    - images/chickenTeriyaki_footlong.png
+    - images/chickenTeriyaki_six_inch.png
+    - images/logo.png
+    - images/meatballMarinara_footlong.png
+    - images/meatballMarinara_six_inch.png
+    - images/tunaMelt_footlong.png
+    - images/tunaMelt_six_inch.png
+    - images/veggieDelight_footlong.png
+    - images/veggieDelight_six_inch.png
+    - sandwiches.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -18,10 +18,7 @@ void main() {
         isFootlong: false,
         breadType: BreadType.wheat,
       );
-      expect(
-        s.image,
-        'assets/images/${SandwichType.tunaMelt.name}_six_inch.png',
-      );
+      expect(s.image, 'images/${SandwichType.tunaMelt.name}_six_inch.png');
     });
   });
 }
